@@ -99,7 +99,7 @@ class ElasticAPIView(views.APIView):
             raise ImproperlyConfigured(msg % self.__class__.__name__)
         index = self.es_model()._get_index()
         es_client = self.get_es_client()
-        s = Search(using=es_client, index=index, doc_type=self.es_model)
+        s = Search(using=es_client, index=index, doc_type=self.es_model._doc_type.mapping.properties.name)
         return s
 
     def do_search(self):
