@@ -27,6 +27,13 @@ class ElasticAPIView(views.APIView):
         """
         return getattr(self, 'es_search_fields', None)
 
+    def get_es_sqs_fields_fields(self):
+        """
+        Return field or fields used for simple_query_string search.
+        The return value must be an iterable.
+        """
+        return getattr(self, 'es_sqs_fields', None)
+
     def get_es_filter_fields(self):
         """
         Return field or fields used for search filtering.

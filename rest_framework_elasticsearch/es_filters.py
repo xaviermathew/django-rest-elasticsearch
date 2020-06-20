@@ -259,7 +259,23 @@ class ElasticSearchFilter(BaseEsFilterBackend):
         ]
 
 
+class ElasticSQSFilter(ElasticSearchFilter):
+    def get_es_query(self, s_query, s_fields, **kwargs):
+        return Q("simple_query_string", query=s_query, fields=s_fields)
+
+    def filter_search(self, request, search, view):
+        s_query = self.get_search_query(request)
+        s_fields = view.get_es_sqs_fields_fields()
+        if not s_query or not s_fields:
+            return search
+
+        q = self.get_es_query(s_query, s_fields, request=request, view=view)
+        search = search.query(q)
+        return search
+
+
 GEO_BOUNDING_BOX = 'geo_bounding_box'
+
 
 class ElasticGeoBoundingBoxFilter(BaseEsFilterBackend):
     geo_bounding_box_param = ""
@@ -365,7 +381,9 @@ class ElasticGeoBoundingBoxFilter(BaseEsFilterBackend):
             )
         ]
 
+
 GEO_DISTANCE = 'geo_distance'
+
 
 class ElasticGeoDistanceFilter(BaseEsFilterBackend):
     geo_distance_param = ''
